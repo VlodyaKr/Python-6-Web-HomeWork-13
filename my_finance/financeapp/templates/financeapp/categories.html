@@ -1,0 +1,90 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@latest/css/pico.min.css">
+    <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/custom.css' %}">
+    <script src="https://picocss.com/examples/js/modal.js"></script>
+    <title>My Finance - Classification</title>
+</head>
+<body>
+<main class="container">
+    <nav style="margin-bottom: 20px; border-bottom: 2px solid; padding-left: 30px">
+        <div class="nav-brand">
+            <ul>
+                <li><a href="/" role="button"> Go back</a></li>
+                <li><a href="{% url 'new_category' %}" role="button">Add category</a></li>
+            </ul>
+        </div>
+        <div class="collapsible-body">
+            <ul class="inline">
+                <li>Welcome <b>{{ user.username }} ({{ user_balance }} ₴)!</b></li>
+                <li><a href="{% url 'user_logout' %}" role="button">Sign Out</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    {% if error %}
+    <div>
+        <mark class="warning">{{ error }}</mark>
+    </div>
+    <br>
+    {% endif %}
+
+    {% for class in classes %}
+    <nav>
+        <div>
+            {% if class.dr_cr %}
+            <div style="color: red">{{class.name}}</div>
+            {% else %}
+            <div style="color: green">{{class.name}}</div>
+            {% endif %}
+        </div>
+        <div>
+            <a href="{% url 'edit_category' class.id %}" role="button">Edit</a>
+            <!--            <a href="{% url 'delete_category' class.id %}" role="button" class="contrast outline">Delete</a>-->
+            <a href="#" role="button" class="contrast outline" data-target="modal-ctg-{{class.id}}"
+               onClick="toggleModal(event)">Delete</a>
+        </div>
+    </nav>
+    <br>
+
+    <!-- Modal -->
+    <dialog id="modal-ctg-{{class.id}}">
+        <article>
+            <a href="#close"
+               aria-label="Close"
+               class="close"
+               data-target="modal-ctg-{{class.id}}"
+               onClick="toggleModal(event)">
+            </a>
+            <h5>Confirm your action!</h5>
+            <p>
+                Delete {{class.name}}?
+            </p>
+            <footer>
+                <a href="#cancel"
+                   role="button"
+                   class="secondary"
+                   data-target="modal-ctg-{{class.id}}"
+                   onClick="toggleModal(event)">
+                    Cancel
+                </a>
+                <a href="{% url 'delete_category' class.id %}"
+                   role="button"
+                   data-target="modal-ctg-{{class.id}}">
+                    Confirm
+                </a>
+            </footer>
+        </article>
+    </dialog>
+
+    {% endfor %}
+
+</main>
+</body>
+</html>

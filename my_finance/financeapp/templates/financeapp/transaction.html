@@ -1,0 +1,40 @@
+{% extends "financeapp/base.html" %}
+
+{% block content %}
+
+<nav style="margin-bottom: 20px; border-bottom: 2px solid; padding-left: 30px">
+    <ul>
+        <li><a href="{% url 'main' %}" role="button"> Go back </a></li>
+    </ul>
+</nav>
+
+    {% if error %}
+    <div>
+        <mark class="warning">{{ error }}</mark>
+    </div>
+    {% endif %}
+
+    <form method="POST">
+        {% csrf_token %}
+        <div style="padding: 10px">
+            <label
+            >Sum:
+                <input type="number" step="any" name="sum" placeholder="Input float number">
+            </label>
+        </div>
+        <div style="padding: 10px">
+            <label
+            >Select category:
+                <select name="categories" size="5" required>
+                    {% for category in categories %}
+                    <option value="{{category.name}}">{{category.name}}</option>
+                    {% endfor %}
+                </select>
+            </label>
+        </div>
+        <div class="grid">
+            <button type="submit">Submit</button>
+            <button type="reset" class="secondary">Reset</button>
+        </div>
+    </form>
+{% endblock %}

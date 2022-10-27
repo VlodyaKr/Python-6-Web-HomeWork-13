@@ -1,0 +1,46 @@
+{% extends "financeapp/base.html" %}
+
+{% block content %}
+
+<nav style="margin-bottom: 20px; border-bottom: 2px solid; padding-left: 30px">
+    <ul>
+        <li><a href="{% url 'view_categories' %}" role="button"> Go back </a></li>
+    </ul>
+</nav>
+
+
+{% if error %}
+<div>
+    <mark class="danger">{{ error }}</mark>
+</div>
+{% endif %}
+
+<form method="POST">
+    {% csrf_token %}
+    <div style="padding: 10px">
+        <label
+        >Category name:
+            <input type="text" name="name" value="{{ category.name }}">
+        </label>
+    </div>
+    {% if is_changed %}
+    <fieldset>
+        {% else %}
+        <fieldset disabled>
+            {% endif %}
+            <label class="switch">
+                {% if category.dr_cr %}
+                <input type="checkbox" id="switch-category" name="switch-category" role="switch" checked="true">
+                {% else %}
+                <input type="checkbox" id="switch-category" name="switch-category" role="switch">
+                {% endif%}
+                Debit / Credit
+            </label>
+        </fieldset>
+        <br>
+        <div class="grid">
+            <button type="submit">Submit</button>
+            <button type="reset" class="secondary">Reset</button>
+        </div>
+</form>
+{% endblock %}

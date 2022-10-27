@@ -1,0 +1,46 @@
+{% extends "financeapp/base.html" %}
+
+{% block content %}
+
+<nav style="margin-bottom: 20px; border-bottom: 2px solid; padding-left: 30px">
+    <ul>
+        <li><a href="{% url 'main' %}" role="button"> Go back </a></li>
+    </ul>
+</nav>
+
+
+{% if error %}
+<div>
+    <mark class="danger">{{ error }}</mark>
+</div>
+{% endif %}
+
+<form method="POST">
+    {% csrf_token %}
+    <fieldset>
+        <label for="dates">
+            <input type=radio id="dates" name="find_dates" value="dates" checked>
+            <div class="grid">
+                <!--        <div style="padding: 10px">-->
+                <label>
+                    Begin date:
+                    <input type="date" name="date1" value="{{ date1|date:'Y-m-d' }}" required>
+                </label>
+                <label
+                >End date:
+                    <input type="date" name="date2" value="{{ date2|date:'Y-m-d' }}" required>
+                </label>
+                <!--        </div>-->
+            </div>
+        </label>
+        <label for="alltime">
+            <input type="radio" id="alltime" name="find_dates" value="alltime">
+            All Time
+        </label>
+        <br>
+        <div class="grid">
+            <button type="submit">Submit</button>
+            <button type="reset" class="secondary">Reset</button>
+        </div>
+</form>
+{% endblock %}

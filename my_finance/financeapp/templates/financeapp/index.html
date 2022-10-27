@@ -1,0 +1,137 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@latest/css/pico.min.css">
+    <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/custom.css' %}">
+    <script src="https://picocss.com/examples/js/modal.js"></script>
+    <title>My Finance - Home</title>
+</head>
+<body>
+<main class="container">
+    <nav style="margin-bottom: 20px; border-bottom: 2px solid; padding-left: 30px">
+        {% if user.is_authenticated %}
+        <div class="nav-brand">
+            <ul>
+                <li><a href="{% url 'new_transaction' 0 %}" role="button" style="color: green">Add Income</a></li>
+                <li><a href="{% url 'new_transaction' 1 %}" role="button" style="color: red">Add Cost</a></li>
+                <li><a href="{% url 'view_categories' %}" role="button">Classification</a></li>
+                <!--                <li><a href="{% url 'main' %}" role="button">Report</a></li>-->
+            </ul>
+        </div>
+        <div class="collapsible-body">
+            <ul class="inline">
+                <li>Welcome <b>{{ user.username }} ({{ user_balance }} ₴)!</b></li>
+                <li><a href="{% url 'user_logout' %}" role="button">Sign Out</a></li>
+            </ul>
+        </div>
+        {% else %}
+        <div class="nav-brand">
+            <ul class="inline">
+                <li>Welcome to <b>My Finance!</b></li>
+            </ul>
+        </div>
+        <div class="collapsible-body">
+            <ul class="inline">
+                <li><a href="{% url 'user_signup' %}" role="button">Sign Up</a></li>
+                <li><a href="{% url 'user_login' %}" role="button">Sign In</a></li>
+            </ul>
+        </div>
+        {% endif %}
+    </nav>
+
+    {% if error %}
+    <div>
+        <mark class="warning">{{ error }}</mark>
+    </div>
+    <br>
+    {% endif %}
+
+    {% if operations %}
+    {% for operation in operations %}
+    <nav>
+        <div>
+            <small>{{ operation.performed|date:'d M y H:m' }}</small>&nbsp; &nbsp; {{ operation.category.name }}
+        </div>
+        <div>
+            {% if operation.category.dr_cr %}
+            <a role="button" class="contrast" style="color: red">{{ operation.sum }}</a>
+            {% else %}
+            <a role="button" class="contrast" style="color: green">{{ operation.sum }}</a>
+            {% endif %}
+            <a href="{% url 'edit_transaction' operation.id %}" role="button">Edit</a>
+            <!--            <a href="{% url 'del_transaction' operation.id %}" role="button" class="contrast outline">Delete</a>-->
+            <a href="#" role="button" class="contrast outline" data-target="modal-trans-{{operation.id}}"
+               onClick="toggleModal(event)">Delete</a>
+
+        </div>
+    </nav>
+    <br>
+
+    <!-- Modal -->
+    <dialog id="modal-trans-{{operation.id}}">
+        <article>
+            <a href="#close"
+               aria-label="Close"
+               class="close"
+               data-target="modal-trans-{{operation.id}}"
+               onClick="toggleModal(event)">
+            </a>
+            <h5>Confirm your action!</h5>
+            <p>
+                Delete {{operation.category.name}}?
+            </p>
+            <footer>
+                <a href="#cancel"
+                   role="button"
+                   class="secondary"
+                   data-target="modal-trans-{{operation.id}}"
+                   onClick="toggleModal(event)">
+                    Cancel
+                </a>
+                <a href="{% url 'del_transaction' operation.id %}"
+                   role="button"
+                   data-target="modal-trans-{{operation.id}}">
+                    Confirm
+                </a>
+            </footer>
+        </article>
+    </dialog>
+
+    {% endfor %}
+    <div style="margin-top: 20px; border-top: 2px solid; padding-left: 30px; padding-top: 20px"></div>
+    {% endif %}
+
+    <nav>
+        <div>
+            <ul>
+                <li>
+                    <a href="{% url 'period_search' %}" role="button" style="background-color: navy">
+                        Period: {{ period }}
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div>
+            <ul class="inline">
+                <li>
+                    <a href="#" role="button" style="background-color: green">
+                        {{ deb_sum|floatformat:2 }} ₴
+                    </a>
+                </li>
+                <li>
+                    <a href="#" role="button" style="background-color: darkred">
+                        {{ cr_sum|floatformat:2 }} ₴
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+</main>
+</body>
+</html>

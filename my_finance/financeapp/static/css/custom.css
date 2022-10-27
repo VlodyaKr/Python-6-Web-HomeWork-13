@@ -1,0 +1,7 @@
+#switch-category {
+  background-color: green;
+}
+
+#switch-category:checked {
+  background-color: red;
+}
